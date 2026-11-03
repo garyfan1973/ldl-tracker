@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#16a34a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="降LDL">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="description" content="84 天降 LDL 每日打勾">
+<title>降 LDL 84 天打勾</title>
+<style>
+:root{
+  --bg:#f4f6f4;--card:#fff;--text:#1b2a1f;--sub:#5d6b61;--line:#dfe6e0;
+  --accent:#16a34a;--accent2:#0f7a37;--accentbg:#e3f6e9;--warn:#e11d48;--warnbg:#ffe4ea;
+  --amber:#d97706;--amberbg:#fff3d6;--c0:#e6ebe7;--c1:#fbd5d0;--c2:#fde7a8;--c3:#a7e3b6;--c4:#27a653;
+  --shadow:0 1px 3px rgba(0,0,0,.08);--btntxt:#fff;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0f1511;--card:#19221c;--text:#e8f0ea;--sub:#9db0a2;--line:#2a3830;
+    --accent:#34d06a;--accent2:#7ae6a0;--accentbg:#173a24;--warn:#ff6b86;--warnbg:#44202a;
+    --amber:#f5b041;--amberbg:#3d3012;--c0:#25302a;--c1:#6d3a35;--c2:#7a6325;--c3:#2f7a46;--c4:#34d06a;
+    --shadow:none;--btntxt:#05210f;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0f1511;--card:#19221c;--text:#e8f0ea;--sub:#9db0a2;--line:#2a3830;
+  --accent:#34d06a;--accent2:#7ae6a0;--accentbg:#173a24;--warn:#ff6b86;--warnbg:#44202a;
+  --amber:#f5b041;--amberbg:#3d3012;--c0:#25302a;--c1:#6d3a35;--c2:#7a6325;--c3:#2f7a46;--c4:#34d06a;
+  --shadow:none;--btntxt:#05210f;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif;
+  font-size:16px;line-height:1.55;overflow-x:hidden;max-width:100%}
+#app{max-width:600px;margin:0 auto;padding:12px 12px calc(86px + env(safe-area-inset-bottom));min-height:100vh}
+h1{font-size:20px;margin:4px 0 2px}
+h2{font-size:18px;margin:0 0 8px}
+h3{font-size:16px;margin:14px 0 6px}
+p{margin:6px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;box-shadow:var(--shadow);overflow-wrap:anywhere}
+.sub{color:var(--sub);font-size:14px}
+.small{font-size:13px;color:var(--sub)}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.tag{display:inline-block;background:var(--accentbg);color:var(--accent2);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.navbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:20px}
+.navbtn:disabled{opacity:.3}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{min-height:48px;border-radius:12px;border:none;background:var(--accent);color:var(--btntxt);font-weight:700;padding:0 18px;font-size:16px}
+.btn.sec{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:var(--warn);color:#fff}
+.btn.sm{min-height:40px;padding:0 12px;font-size:14px}
+input,select,textarea{font:inherit;font-size:16px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:0 12px;width:100%;max-width:100%}
+textarea{padding:10px 12px;min-height:90px}
+label{display:block;font-size:14px;color:var(--sub);margin:8px 0 4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{text-align:center;padding:10px 4px}
+.stat b{display:block;font-size:26px;line-height:1.2}
+.ringwrap{position:relative;width:112px;height:112px;flex:none}
+.ringwrap svg{width:112px;height:112px;transform:rotate(-90deg)}
+.ringtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:26px;line-height:1.1}
+.ringtxt small{font-size:12px;color:var(--sub);font-weight:500}
+.msg{border-radius:14px;padding:12px 14px;font-weight:600;margin:10px 0;background:var(--amberbg);color:var(--text);border:1px solid var(--amber)}
+.msg.scold{background:var(--warnbg);border-color:var(--warn)}
+.msg.good{background:var(--accentbg);border-color:var(--accent)}
+.cat{font-size:14px;font-weight:700;color:var(--sub);margin:14px 2px 6px;letter-spacing:.05em}
+.item{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0;min-height:64px}
+.item .box{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:20px;color:transparent;margin-top:1px}
+.item[aria-checked=true]{background:var(--accentbg);border-color:var(--accent)}
+.item[aria-checked=true] .box{background:var(--accent);border-color:var(--accent);color:var(--btntxt)}
+.item[aria-checked=true] .ttl{text-decoration:line-through;text-decoration-color:var(--sub);opacity:.75}
+.item .ttl{font-weight:700;font-size:16px;line-height:1.4}
+.item .det{font-size:13px;color:var(--sub);margin-top:2px;line-height:1.5}
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:10}
+.tabbar .in{display:flex;width:100%;max-width:600px}
+.tabbar button{flex:1;border:none;background:none;min-height:60px;padding:6px 0;color:var(--sub);font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tabbar button span{font-size:22px;line-height:1}
+.tabbar button[aria-selected=true]{color:var(--accent);font-weight:700}
+.heat{display:grid;grid-template-columns:34px repeat(7,1fr);gap:4px;align-items:center}
+.heat .hd{font-size:12px;color:var(--sub);text-align:center}
+.heat .wk{font-size:12px;color:var(--sub)}
+.cell{aspect-ratio:1/1;border-radius:8px;border:none;background:var(--c0);color:var(--text);font-size:10px;line-height:1.1;padding:0;min-width:0;display:flex;align-items:center;justify-content:center;opacity:1}
+.cell.l0{background:var(--c0)}.cell.l1{background:var(--c1)}.cell.l2{background:var(--c2)}.cell.l3{background:var(--c3)}.cell.l4{background:var(--c4);color:var(--btntxt)}
+.cell.future{opacity:.35}
+.cell.today{outline:3px solid var(--text);outline-offset:-1px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-top:10px;align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:3px}
+.bar{height:12px;border-radius:6px;background:var(--c0);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.list li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.list{list-style:none;padding:0;margin:8px 0 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:600}
+details{border-top:1px solid var(--line);padding:8px 0}
+summary{font-weight:700;cursor:pointer;min-height:36px;display:flex;align-items:center}
+.cur{background:var(--accentbg)}
+ul.b{padding-left:20px;margin:6px 0}
+ul.b li{margin:4px 0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom));background:#222;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;z-index:30;max-width:90vw}
+.disc{font-size:12.5px;color:var(--sub);border:1px dashed var(--line);border-radius:12px;padding:10px;margin:14px 0}
+svg.chart{width:100%;height:auto;display:block}
+svg.chart text{fill:var(--sub);font-size:10px}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--btntxt);border-color:var(--accent)}
+.welcome{padding-top:18px}
+.big{font-size:44px;text-align:center}
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:20px">需要開啟 JavaScript 才能使用。</p></noscript></div>
+<script>
+window.__showErr=function(m){
+  try{var a=document.getElementById('app');
+  a.innerHTML='<div style="padding:20px;font-family:sans-serif"><h2>😵 App 出錯了</h2><p>請把下面這行截圖給開發的人：</p><pre style="white-space:pre-wrap;word-break:break-all;background:#eee;color:#000;padding:10px;border-radius:8px">'+String(m).replace(/[<>&]/g,'')+'</pre><p>你的打勾資料還在手機裡，沒有被刪掉。</p></div>'}catch(e){}
+};
+window.addEventListener('error',function(e){window.__showErr((e.message||'error')+' @'+(e.lineno||'?')+':'+(e.colno||'?'))});
+window.addEventListener('unhandledrejection',function(e){window.__showErr('promise: '+(e.reason&&e.reason.message||e.reason))});
+</script>
+<div id="toast" class="toast" style="display:none" role="status"></div>
+<script>
+(function(){
+'use strict';
+var KEY='ldl-tracker-v1';
+var PLAN_DAYS=84;
+var THRESH=80;
+
+/* ---------- date helpers (local time) ---------- */
+function pad(n){return n<10?'0'+n:''+n}
+function fmt(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function addDays(s,n){var d=parse(s);d.setDate(d.getDate()+n);return fmt(d)}
+function diffDays(a,b){var x=parse(a),y=parse(b);return Math.round((Date.UTC(y.getFullYear(),y.getMonth(),y.getDate())-Date.UTC(x.getFullYear(),x.getMonth(),x.getDate()))/864e5)}
+function todayStr(){return fmt(new Date())}
+var WD=['日','一','二','三','四','五','六'];
+function dowOf(s){return parse(s).getDay()}
+function niceDate(s){var d=parse(s);return (d.getMonth()+1)+'/'+d.getDate()+'（週'+WD[d.getDay()]+'）'}
+function md(s){var d=parse(s);return (d.getMonth()+1)+'/'+d.getDate()}
+function validDate(s){return typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&fmt(parse(s))===s}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+/* ---------- plan content ---------- */
+var PHASES=[
+ {name:'月 1　打底',weeks:'第 1–4 週',goal:'先把最傷血管的壞習慣拔掉，建立每天打勾的節奏。',
+  points:['戒掉含糖飲料、油炸','早餐換成燕麥／全穀＋無糖豆漿','每天一小把堅果、每週 2 餐深海魚','有氧從 20 分鐘起步，步數 6000→7000','固定就寢與起床時間']},
+ {name:'月 2　加強',weeks:'第 5–8 週',goal:'把降 LDL 最有效的飲食項目補齊，運動達到每週 150 分鐘。',
+  points:['可溶性纖維 10 g 以上（天天）','豆製品取代部分肉類，認識植物固醇','加碼戒加工肉、甜點','有氧 30 分鐘，每週 150 分以上；肌力加重量','外食點餐策略：便當、夜市、火鍋']},
+ {name:'月 3　鞏固',weeks:'第 9–12 週',goal:'把習慣變成日常，守住酒精與聚餐，第 12 週抽血驗收。',
+  points:['酒精不超標','聚餐、過節的應對劇本','睡眠與壓力管理','有氧 35 分鐘、步數 9000','第 12 週抽血，帶著紀錄回診']}
+];
+var WEEKS=[
+ '啟動週：把現況記下來（體重、LDL），先戒掉含糖飲料；手機放到床外充電。',
+ '早餐大改造：每天燕麥／全穀＋無糖豆漿，奶油厚片、培根蛋餅、奶茶退場。',
+ '油炸退場：鹹酥雞、炸雞排、薯條先放掉，改成蒸、烤、滷、燙；有氧升到 25 分鐘。',
+ '好油上場：每天一小把堅果，本週吃 2 餐深海魚；月底回顧體重與睡眠。',
+ '纖維加碼：可溶性纖維 10 g 以上（燕麥、豆類、秋葵、海帶、奇異果、芭樂）；有氧升到 30 分鐘。',
+ '豆製品當主角：每週至少 4 餐以豆腐、豆干、毛豆取代肉；認識植物固醇；開始戒加工肉。',
+ '肌力升級：加彈力帶或啞鈴；甜點歸零，想吃就水果。',
+ '外食戰術週：便當去皮去肥、飯半碗菜加倍，夜市與火鍋的安全選項；月底回顧。',
+ '酒精與聚餐：酒精不超標，練習聚餐前先吃、點餐不跟風；步數升到 9000。',
+ '睡眠穩固：週末作息誤差 ≤ 1 小時；有氧升到 35 分鐘；找出最難守的兩項。',
+ '維持與微調：為最難守的兩項想對策，把好習慣綁進固定流程（例如飯後散步）。',
+ '驗收週：預約抽血（依醫師指示是否空腹），抽血前維持日常、不要臨時抱佛腳；整理紀錄準備回診。'
+];
+function weekOfIdx(i){return Math.min(12,Math.max(1,Math.floor(i/7)+1))}
+function phaseOfWeek(w){return w<=4?0:(w<=8?1:2)}
+function aeroMin(w){return w<=2?20:(w<=4?25:(w<=8?30:35))}
+function stepGoal(w){return w<=2?6000:(w<=4?7000:(w<=8?8000:9000))}
+function strMin(w){return w<=4?20:(w<=8?25:30)}
+function aeroDay(dow){return dow===1||dow===3||dow===4||dow===6||dow===0}
+
+var CATS={diet:'🥗 飲食',move:'🏃 運動',sleep:'😴 睡眠'};
+function itemsFor(dateStr,idx){
+  var w=weekOfIdx(idx),p=phaseOfWeek(w),dow=dowOf(dateStr);
+  var it=[];
+  it.push({id:'d1',cat:'diet',title:'早餐：燕麥／全穀 ＋ 無糖豆漿',
+    det:'燕麥片約 40–80 g（沖泡或煮粥），或全麥吐司、地瓜。早餐店避開奶油厚片、培根蛋餅、鐵板麵、奶茶。'});
+  it.push({id:'d2',cat:'diet',title:'蔬果 5 份 ＋ 可溶性纖維 10 g',
+    det:(p===0?'先求蔬菜 3 份（1 份≈煮熟半碗）＋水果 2 份（1 份≈拳頭大），纖維盡量到 10 g。':'蔬菜 3 份＋水果 2 份，可溶性纖維要到 10 g 以上。')+'來源：燕麥、豆類、秋葵、海帶、木耳、奇異果、芭樂、柑橘。'});
+  it.push({id:'d3',cat:'diet',title:'好蛋白 ＋ 一小把堅果',
+    det:'主菜選豆腐、豆干、毛豆、深海魚（鮭魚、鯖魚、秋刀魚）、去皮雞肉；不吃肥肉、雞皮、豬皮、內臟。加一小把（約 20–30 g）原味無調味堅果。'+(p===0?'本月目標：每週 2 餐深海魚。':'每週至少 2 餐深海魚、4 餐豆製品。')});
+  it.push({id:'d4',cat:'diet',title:p===0?'零含糖飲料':'零含糖飲料 ＋ 甜點',
+    det:p===0?'手搖杯、汽水、果汁、含糖咖啡奶茶今天都不碰；改無糖茶、黑咖啡、白開水。':'含糖飲料、蛋糕、冰品、餅乾、酥皮點心今天都不碰；想吃甜的就吃水果。'});
+  it.push({id:'d5',cat:'diet',title:p===0?'零油炸':(p===1?'零油炸 ＋ 加工肉':'零油炸、加工肉，酒精不超標'),
+    det:p===0?'鹹酥雞、炸雞排、薯條、油條、天婦羅今天都不吃，改蒸、烤、滷、燙。':
+        (p===1?'再加上香腸、熱狗、火腿、培根、貢丸、肉鬆。':'酒精最好不喝；要喝每天上限男 2 份、女 1 份（1 份＝啤酒 360 ml），且不要天天喝。')});
+  if(aeroDay(dow)){
+    it.push({id:'e1',cat:'move',title:'有氧運動 '+aeroMin(w)+' 分鐘',
+      det:'快走、慢跑、騎車、游泳、爬坡皆可；中強度＝微喘、能說話但不能唱歌。可分 2 段完成。不舒服就改輕鬆散步。'});
+  }else{
+    it.push({id:'e1',cat:'move',title:'肌力訓練 '+strMin(w)+' 分鐘（每週 2 次）',
+      det:w<=4?'徒手：深蹲、牆壁伏地挺身、棒式、臀橋，各 2–3 組，做 10–12 下。':(w<=8?'加彈力帶或水瓶／啞鈴：深蹲、划船、硬舉、肩推，各 3 組。':'中等重量，3 組 8–12 下，下肢＋上肢＋核心都要練。')});
+  }
+  it.push({id:'e2',cat:'move',title:'走滿 '+stepGoal(w).toLocaleString('en-US')+' 步',
+    det:'含運動的步數，用手機健康 App 或手環查看。久坐每小時起來動 3 分鐘。'});
+  it.push({id:'s1',cat:'sleep',title:'23:00 前上床，睡滿 7–8 小時',
+    det:'早上固定時間起床（週末誤差 ≤ 1 小時），規律比補眠重要。'});
+  it.push({id:'s2',cat:'sleep',title:'睡前 1 小時不滑手機、不看螢幕',
+    det:'手機放到床外充電，改看紙本、伸展、泡腳或聽輕音樂。'});
+  it.push({id:'s3',cat:'sleep',title:'下午 2 點後不碰咖啡因',
+    det:'咖啡、茶（含手搖茶）、可樂、能量飲都算；想喝就選麥茶、無咖啡因花草茶或白開水。'});
+  return it;
+}
+
+/* ---------- state ---------- */
+var S=load();
+var ui={tab:'today',view:null,toast:null,sel:'ldl'};
+function blank(){return {ver:1,start:null,checks:{},weights:[],ldl:[],theme:'auto'}}
+function load(){
+  try{var r=window.localStorage.getItem(KEY);if(r){var o=sanitize(JSON.parse(r));if(o)return o}}catch(e){}
+  return blank();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('儲存失敗：瀏覽器空間不足或被封鎖')}}
+function sanitize(o){
+  if(!o||typeof o!=='object')return null;
+  var r=blank();
+  if(o.start!=null){if(!validDate(o.start))return null;r.start=o.start}
+  if(o.checks&&typeof o.checks==='object'){
+    Object.keys(o.checks).forEach(function(d){
+      if(!validDate(d)||!o.checks[d]||typeof o.checks[d]!=='object')return;
+      var m={};Object.keys(o.checks[d]).forEach(function(k){if(/^[a-z]\d$/.test(k)&&o.checks[d][k]===true)m[k]=true});
+      if(Object.keys(m).length)r.checks[d]=m;
+    });
+  }
+  function arr(a,lo,hi){
+    if(!Array.isArray(a))return [];
+    return a.filter(function(x){return x&&validDate(x.date)&&typeof x.val==='number'&&isFinite(x.val)&&x.val>=lo&&x.val<=hi})
+      .map(function(x){return {date:x.date,val:Math.round(x.val*10)/10}});
+  }
+  r.weights=arr(o.weights,20,300);r.ldl=arr(o.ldl,20,500);
+  if(o.theme==='light'||o.theme==='dark')r.theme=o.theme;
+  return r;
+}
+function applyTheme(){
+  var h=document.documentElement;
+  if(S.theme==='light'||S.theme==='dark')h.setAttribute('data-theme',S.theme);else h.removeAttribute('data-theme');
+}
+
+/* ---------- computations ---------- */
+function pctOf(dateStr){
+  if(!S.start)return 0;
+  var idx=diffDays(S.start,dateStr);
+  var items=itemsFor(dateStr,Math.max(0,idx));
+  var c=S.checks[dateStr]||{};
+  var n=0;items.forEach(function(i){if(c[i.id])n++});
+  return Math.round(n/items.length*100);
+}
+function lastPlanDay(){return addDays(S.start,PLAN_DAYS-1)}
+function streakInfo(){
+  var cur=0,best=0,done=0;
+  if(!S.start)return {cur:0,best:0,done:0};
+  var t=todayStr(),end=lastPlanDay();if(t<end)end=t;
+  var n=diffDays(S.start,end);
+  for(var i=0;i<=n;i++){
+    var d=addDays(S.start,i),p=pctOf(d);
+    if(p>=THRESH){cur++;done++;if(cur>best)best=cur}
+    else if(d===t){/* today still pending: keep streak through yesterday */}
+    else cur=0;
+  }
+  return {cur:cur,best:best,done:done};
+}
+function missedRun(){ // consecutive missed days ending yesterday
+  var t=todayStr(),n=0,d=addDays(t,-1);
+  while(S.start&&d>=S.start&&d<=lastPlanDay()&&pctOf(d)<THRESH){n++;d=addDays(d,-1)}
+  return n;
+}
+function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h}
+function pick(a,seed){return a[hash(seed)%a.length]}
+
+var MSG={
+ z:['今天還是 0%？LDL 163 不會自己乖乖掉下去喔，先勾一個最簡單的啦！','你的血管在等你耶，先把早餐燕麥解決，快！','再不開始，醫師就要開藥單給你了啦。','滑手機的時間拿來勾一個吧，不要說明天再說，明天也是這樣講。'],
+ l:['才這樣而已？LDL 又沒有在放水，繼續啦！','進度不到一半，晚餐不要亂點鹹酥雞喔，我在看。','動起來啦，沙發不會幫你降膽固醇。','開始就好，現在不勾，睡前你會後悔。'],
+ m:['過半了！但還沒 80%，連勝要 80% 才算數，衝一下！','差一點點而已，現在放棄太可惜，出去走個路啦。','還缺幾項，別讓今天白白漏氣。'],
+ h:['穩！今天算數了，連勝 +1。剩下的別偷懶，湊滿 100% 啦！','80% 過關！不錯喔，但是 100% 才是真英雄。','今天有料，LDL 開始害怕了。'],
+ f:['100%！太狠了，LDL 都在發抖。明天繼續，別得意忘形。','全勾！你是我見過最認真的人，保持下去！','滿分！今天的你，晚上可以睡得很安心。']
+};
+function messageFor(p,dateStr,streak){
+  var b=p===0?'z':(p<50?'l':(p<THRESH?'m':(p<100?'h':'f')));
+  var m=pick(MSG[b],dateStr+b);
+  var cls=p>=THRESH?'good':'';
+  var extra='';
+  if(p<THRESH&&new Date().getHours()>=20)extra=' 都這麼晚了還沒達標，睡前至少補完能做的。';
+  if(p>=THRESH&&streak>0&&streak%7===0)extra=' 連續 '+streak+' 天了，給你拍拍手，但不准鬆懈。';
+  return {text:m+extra,cls:cls};
+}
+
+/* ---------- charts ---------- */
+function lineChart(points,opt){
+  if(!points.length)return '<p class="sub">還沒有紀錄，先登錄第一筆吧。</p>';
+  var pts=points.slice().sort(function(a,b){return a.date<b.date?-1:(a.date>b.date?1:0)});
+  var W=320,H=170,L=34,R=14,T=14,B=26;
+  var vals=pts.map(function(p){return p.val});
+  if(opt.target!=null)vals.push(opt.target);
+  var lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
+  var padv=Math.max((hi-lo)*0.15,opt.minPad||2);lo-=padv;hi+=padv;
+  var t0=parse(pts[0].date).getTime(),t1=parse(pts[pts.length-1].date).getTime();
+  function X(d){return pts.length===1||t1===t0?(L+(W-L-R)/2):L+(parse(d).getTime()-t0)/(t1-t0)*(W-L-R)}
+  function Y(v){return T+(hi-v)/(hi-lo)*(H-T-B)}
+  var s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(opt.label)+'折線圖">';
+  for(var g=0;g<=3;g++){
+    var v=lo+(hi-lo)*g/3,y=Y(v);
+    s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="currentColor" stroke-opacity=".12"/>';
+    s+='<text x="'+(L-4)+'" y="'+(y+3).toFixed(1)+'" text-anchor="end">'+Math.round(v)+'</text>';
+  }
+  if(opt.target!=null){
+    var ty=Y(opt.target);
+    s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'" stroke="#16a34a" stroke-dasharray="5 4" stroke-width="1.5"/>';
+    s+='<text x="'+(W-R)+'" y="'+(ty-4).toFixed(1)+'" text-anchor="end" style="fill:#16a34a">目標 '+opt.target+'</text>';
+  }
+  var path=pts.map(function(p,i){return (i?'L':'M')+X(p.date).toFixed(1)+' '+Y(p.val).toFixed(1)}).join(' ');
+  if(pts.length>1)s+='<path d="'+path+'" fill="none" stroke="'+opt.color+'" stroke-width="2.5" stroke-linejoin="round"/>';
+  pts.forEach(function(p,i){
+    var x=X(p.date),y=Y(p.val);
+    s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="4.5" fill="'+opt.color+'"><title>'+md(p.date)+'：'+p.val+'</title></circle>';
+    if(i===0||i===pts.length-1||pts.length<=6)s+='<text x="'+x.toFixed(1)+'" y="'+(y-8).toFixed(1)+'" text-anchor="middle" style="fill:currentColor;font-weight:700">'+p.val+'</text>';
+  });
+  s+='<text x="'+L+'" y="'+(H-8)+'" text-anchor="start">'+md(pts[0].date)+'</text>';
+  if(pts.length>1)s+='<text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end">'+md(pts[pts.length-1].date)+'</text>';
+  return s+'</svg>';
+}
+
+/* ---------- views ---------- */
+function ring(p){
+  var r=48,c=2*Math.PI*r,off=c*(1-p/100);
+  var col=p>=THRESH?'var(--accent)':(p>=50?'var(--amber)':'var(--warn)');
+  return '<div class="ringwrap"><svg viewBox="0 0 112 112"><circle cx="56" cy="56" r="'+r+'" fill="none" stroke="var(--c0)" stroke-width="12"/>'+
+   '<circle cx="56" cy="56" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg>'+
+   '<div class="ringtxt"><span id="pct">'+p+'%</span><small>今日完成</small></div></div>';
+}
+
+function viewWelcome(){
+  var t=todayStr();
+  return '<div class="welcome"><div class="big">🫀</div><h1 style="text-align:center">84 天降 LDL 計畫</h1>'+
+  '<p class="sub" style="text-align:center">飲食、運動、睡眠三管齊下，每天打勾，84 天後抽血驗收。</p>'+
+  '<div class="card"><label for="startDate">計畫開始日（之後可在「設定」修改）</label><input id="startDate" type="date" value="'+t+'">'+
+  '<label for="baseLdl">目前 LDL（mg/dL，選填）</label><input id="baseLdl" type="number" inputmode="decimal" value="163" min="20" max="500" step="1">'+
+  '<p class="small">填了會自動記成第一筆 LDL 紀錄，之後用來畫進度圖。</p>'+
+  '<button class="btn" style="width:100%;margin-top:10px" data-act="begin">開始 84 天挑戰</button></div>'+
+  disclaimer()+'</div>';
+}
+function disclaimer(){
+  return '<div class="disc">⚠️ 本 App 內容為一般生活型態衛教資訊，不是醫療建議，也不能取代醫師診斷。LDL 的目標與是否用藥，請和你的醫師或營養師討論。若已在服藥，請勿自行停藥；運動中若有胸痛、喘不過氣或頭暈，請立刻停止就醫。</div>';
+}
+
+function viewToday(){
+  var t=todayStr(),v=ui.view||t;
+  if(v>t)v=t;
+  ui.view=v;
+  var idx=diffDays(S.start,v);
+  var h='';
+  var isToday=v===t;
+  var prevDis=(idx<=0)?'disabled':'',nextDis=(v>=t)?'disabled':'';
+  h+='<div class="topbar"><button class="navbtn" data-act="prevday" aria-label="前一天" '+prevDis+'>‹</button>'+
+     '<div style="text-align:center"><h1>'+niceDate(v)+(isToday?' · 今天':'')+'</h1></div>'+
+     '<button class="navbtn" data-act="nextday" aria-label="後一天" '+nextDis+'>›</button></div>';
+  if(!isToday)h+='<div style="text-align:center"><button class="btn sec sm" data-act="gotoday">回到今天</button></div>';
+  if(idx<0){
+    h+='<div class="card"><h2>計畫還沒開始</h2><p>計畫開始日是 '+niceDate(S.start)+'，還有 '+(-idx)+' 天。到時候再來打勾，這幾天可以先清冰箱、買燕麥。</p></div>';
+    return h;
+  }
+  var w=weekOfIdx(idx),ph=phaseOfWeek(w),over=idx>=PLAN_DAYS;
+  var items=itemsFor(v,idx),c=S.checks[v]||{};
+  var p=pctOf(v),si=streakInfo();
+  h+='<div class="card"><div class="row"><div class="grow">'+
+     (over?'<span class="tag">計畫已完成 🎉</span>':'<span class="tag">'+PHASES[ph].name.replace('　',' ')+'</span> <span class="tag">第 '+w+' 週 · 第 '+(idx+1)+'/84 天</span>')+
+     '<div class="stat" style="text-align:left;padding:8px 0 0"><b id="streak">🔥 '+si.cur+' 天</b><span class="sub">連勝（每天 ≥'+THRESH+'%）· 最長 '+si.best+' 天</span></div>'+
+     '</div>'+ring(p)+'</div></div>';
+  if(over){
+    h+='<div class="msg good">84 天結束了！去抽血驗收，把「設定→紀錄」的 LDL 登錄起來，再帶著結果跟醫師討論下一步。</div>';
+  }else{
+    h+='<div class="card" style="background:var(--accentbg)"><div class="small">本週重點</div><div style="font-weight:600">'+esc(WEEKS[w-1])+'</div></div>';
+  }
+  if(isToday){
+    var yd=addDays(t,-1);
+    if(yd>=S.start&&yd<=lastPlanDay()){
+      var yp=pctOf(yd);
+      if(yp<THRESH){
+        var run=missedRun(),txt;
+        if(run>=2)txt='連續 '+run+' 天沒達標了！昨天只有 '+yp+'%，連勝歸零。你是打算讓醫師看到 LDL 再往上爬嗎？今天補回來！';
+        else if(yp===0)txt='昨天整天 0%，人間蒸發喔？連勝歸零，今天給我認真一點！';
+        else txt='昨天只有 '+yp+'%，沒到 '+THRESH+'%，連勝斷掉了。今天要補回來，不准再來一次！';
+        h+='<div class="msg scold" id="scold">😤 '+txt+'</div>';
+      }
+    }
+    if(!over){var m=messageFor(p,v,si.cur);h+='<div class="msg '+m.cls+'" id="coach">'+esc(m.text)+'</div>'}
+  }
+  var cats=['diet','move','sleep'];
+  cats.forEach(function(k){
+    h+='<div class="cat">'+CATS[k]+'</div>';
+    items.filter(function(i){return i.cat===k}).forEach(function(i){
+      var on=!!c[i.id];
+      h+='<button class="item" role="checkbox" aria-checked="'+on+'" data-act="toggle" data-id="'+i.id+'"><span class="box">✓</span><span><span class="ttl" style="display:block">'+esc(i.title)+'</span><span class="det" style="display:block">'+esc(i.det)+'</span></span></button>';
+    });
+  });
+  h+=disclaimer();
+  return h;
+}
+
+function viewHistory(){
+  var t=todayStr(),h='<h1>歷史紀錄</h1>';
+  var si=streakInfo();
+  h+='<div class="card"><div class="grid2"><div class="stat"><b>🔥 '+si.cur+'</b><span class="sub">目前連勝（天）</span></div><div class="stat"><b>🏆 '+si.best+'</b><span class="sub">最長連勝（天）</span></div></div>'+
+     '<div class="grid2"><div class="stat"><b>'+si.done+'</b><span class="sub">達標天數（≥'+THRESH+'%）</span></div><div class="stat"><b>'+Math.max(0,Math.min(PLAN_DAYS,diffDays(S.start,t)+1))+'/84</b><span class="sub">已進行天數</span></div></div></div>';
+  h+='<div class="card"><h2>84 天熱力圖</h2><p class="small">點一格可以回去補打勾。</p><div class="heat"><span></span>';
+  for(var i=0;i<7;i++)h+='<span class="hd">週'+WD[(dowOf(S.start)+i)%7]+'</span>';
+  for(var wk=0;wk<12;wk++){
+    h+='<span class="wk">W'+(wk+1)+'</span>';
+    for(var d=0;d<7;d++){
+      var di=wk*7+d,ds=addDays(S.start,di),fut=ds>t,p=fut?0:pctOf(ds);
+      var lv=fut?0:(p===0?1:(p<50?1:(p<THRESH?2:(p<100?3:4))));
+      if(!fut&&p===0)lv=1;
+      h+='<button class="cell l'+lv+(fut?' future':'')+(ds===t?' today':'')+'" data-act="goday" data-date="'+ds+'" '+(fut?'disabled':'')+' aria-label="'+md(ds)+' '+(fut?'未到':p+'%')+'">'+md(ds)+'</button>';
+    }
+  }
+  h+='</div><div class="legend"><span><i style="background:var(--c1)"></i>&lt;50%</span><span><i style="background:var(--c2)"></i>50–79%</span><span><i style="background:var(--c3)"></i>80–99%</span><span><i style="background:var(--c4)"></i>100%</span><span><i style="background:var(--c0)"></i>未到</span></div></div>';
+  h+='<div class="card"><h2>每週平均完成率</h2>';
+  for(var w=0;w<12;w++){
+    var s0=addDays(S.start,w*7),sum=0,n=0;
+    for(var k=0;k<7;k++){var dd=addDays(s0,k);if(dd<=t){sum+=pctOf(dd);n++}}
+    var avg=n?Math.round(sum/n):null;
+    h+='<div class="row" style="margin:8px 0"><span style="width:44px;font-size:14px">第'+(w+1)+'週</span><div class="bar"><i style="width:'+(avg||0)+'%"></i></div><b style="width:48px;text-align:right" class="wavg">'+(avg===null?'—':avg+'%')+'</b></div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+function logList(kind,unit){
+  var arr=(kind==='ldl'?S.ldl:S.weights).slice().sort(function(a,b){return a.date<b.date?1:-1});
+  if(!arr.length)return '';
+  var map=kind==='ldl'?'ldl':'weights';
+  return '<ul class="list">'+arr.map(function(x){
+    var idx=(kind==='ldl'?S.ldl:S.weights).indexOf(x);
+    return '<li><span>'+x.date+'</span><b>'+x.val+' '+unit+'</b><button class="btn sec sm" data-act="dellog" data-kind="'+map+'" data-i="'+idx+'" aria-label="刪除">刪除</button></li>';
+  }).join('')+'</ul>';
+}
+function viewLogs(){
+  var t=todayStr(),h='<h1>身體數據</h1>';
+  var base=S.ldl.length?S.ldl.slice().sort(function(a,b){return a.date<b.date?-1:1})[0].val:null;
+  var lastL=S.ldl.length?S.ldl.slice().sort(function(a,b){return a.date<b.date?-1:1}).slice(-1)[0].val:null;
+  h+='<div class="card"><h2>LDL 膽固醇（mg/dL）</h2>'+lineChart(S.ldl,{target:130,color:'#e11d48',label:'LDL',minPad:6});
+  if(base!==null&&S.ldl.length>1){
+    var ch=Math.round((lastL-base)/base*1000)/10;
+    h+='<p id="ldlchange" class="msg '+(lastL<base?'good':'')+'">'+(ch<0?'比起始值下降 '+Math.abs(ch)+'%':(ch>0?'比起始值上升 '+ch+'%':'和起始值一樣'))+'（'+base+' → '+lastL+'）。'+(lastL<130?'已低於 130，但是否夠低要看你的風險，請和醫師確認。':'生活型態通常可降 10–20%，若不夠，請和醫師討論下一步。')+'</p>';
+  }
+  h+='<div class="row wrap"><div class="grow"><label for="ldlDate">日期</label><input id="ldlDate" type="date" value="'+t+'"></div><div class="grow"><label for="ldlVal">LDL</label><input id="ldlVal" type="number" inputmode="decimal" placeholder="例：150" min="20" max="500" step="1"></div></div>'+
+     '<button class="btn" style="width:100%;margin-top:10px" data-act="addldl">新增 LDL 紀錄</button>'+logList('ldl','mg/dL')+'</div>';
+  h+='<div class="card"><h2>體重（kg）</h2>'+lineChart(S.weights,{color:'#2563eb',label:'體重',minPad:1})+
+     '<div class="row wrap"><div class="grow"><label for="wDate">日期</label><input id="wDate" type="date" value="'+t+'"></div><div class="grow"><label for="wVal">體重</label><input id="wVal" type="number" inputmode="decimal" placeholder="例：72.5" min="20" max="300" step="0.1"></div></div>'+
+     '<button class="btn" style="width:100%;margin-top:10px" data-act="addweight">新增體重紀錄</button>'+logList('weight','kg')+'</div>';
+  return h;
+}
+
+function planTable(){
+  var rows=[['第 1–2 週',20,'6,000','2 次 × 20 分'],['第 3–4 週',25,'7,000','2 次 × 20 分'],['第 5–8 週',30,'8,000','2 次 × 25 分'],['第 9–12 週',35,'9,000','2 次 × 30 分']];
+  return '<table><tr><th>週次</th><th>有氧（每次）</th><th>每週有氧</th><th>每日步數</th><th>肌力</th></tr>'+rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+' 分</td><td>'+(r[1]*5)+' 分</td><td>'+r[2]+'</td><td>'+r[3]+'</td></tr>'}).join('')+'</table>'+
+   '<p class="small">每週 5 天有氧（週一、三、四、六、日）＋ 2 天肌力（週二、五）。第 5 週起達到每週 150 分鐘以上中強度有氧，符合一般成人建議。</p>';
+}
+function viewPlan(){
+  var idx=Math.max(0,Math.min(PLAN_DAYS-1,diffDays(S.start,todayStr()))),cw=weekOfIdx(idx);
+  var base=S.ldl.length?S.ldl.slice().sort(function(a,b){return a.date<b.date?-1:1})[0].val:163;
+  var lo=Math.round(base*0.8),hi=Math.round(base*0.9);
+  var h='<h1>84 天降脂計畫</h1>';
+  h+='<div class="card"><h2>目標與預期</h2><ul class="b">'+
+    '<li>一般成人 LDL 建議 <b>&lt; 130 mg/dL</b>；若有高血壓、糖尿病、抽菸、家族心血管病史，目標可能是 &lt; 100，已有心血管疾病甚至 &lt; 70，<b>實際目標請由醫師決定</b>。</li>'+
+    '<li>認真執行生活型態調整，LDL 通常可降約 <b>10–20%</b>。以 '+base+' 估算，約落在 <b>'+lo+'–'+hi+'</b>。</li>'+
+    '<li>如果 12 週後還沒到醫師設定的目標，或 LDL 本來就很高（例如 ≥ 190）、有家族性高膽固醇、糖尿病、心血管疾病，醫師可能會評估是否搭配藥物。<b>這不代表失敗</b>，飲食運動仍然會讓藥效更好、劑量更低。</li>'+
+    '<li>第 12 週（第 84 天前後）安排抽血複檢，抽血前是否空腹依醫師指示。</li></ul></div>';
+  h+='<div class="card"><h2>三個階段與每週重點</h2>';
+  PHASES.forEach(function(P,pi){
+    h+='<h3>'+P.name+'（'+P.weeks+'）</h3><p class="sub">'+esc(P.goal)+'</p><ul class="b">'+P.points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';
+    h+='<table>';
+    for(var w=pi*4+1;w<=pi*4+4;w++)h+='<tr class="'+(w===cw?'cur':'')+'"><td style="width:54px"><b>第'+w+'週</b></td><td>'+esc(WEEKS[w-1])+(w===cw?' <span class="tag">本週</span>':'')+'</td></tr>';
+    h+='</table>';
+  });
+  h+='</div>';
+  h+='<div class="card"><h2>🥗 飲食重點</h2><ul class="b">'+
+    '<li><b>飽和脂肪</b>：少吃肥肉、雞皮、豬皮、奶油、豬油、椰子油、全脂乳製品，占總熱量盡量 &lt; 7%。</li>'+
+    '<li><b>反式脂肪</b>：越少越好，避開氫化植物油、酥皮點心、起酥麵包、市售油炸品、奶精、植物性奶油製品；買包裝食品看營養標示的「反式脂肪」要是 0。</li>'+
+    '<li><b>可溶性纖維 10 g 以上／天</b>：燕麥、大麥、豆類（黃豆、黑豆、毛豆、鷹嘴豆）、秋葵、海帶、木耳、奇異果、芭樂、柑橘、蘋果。</li>'+
+    '<li><b>燕麥</b>：每天約 40–80 g（乾燕麥片），β-葡聚醣有助降低 LDL。選純燕麥片，避開加糖即溶麥片。</li>'+
+    '<li><b>豆製品</b>：豆腐、豆干、毛豆、無糖豆漿取代部分紅肉與加工肉。避開炸豆腐、百頁豆腐、豆皮若為油炸。</li>'+
+    '<li><b>堅果</b>：每天一小把（約 20–30 g）原味無調味，如杏仁、核桃、腰果；熱量高，不要吃多。</li>'+
+    '<li><b>深海魚</b>：每週 2 餐以上，鮭魚、鯖魚、秋刀魚、沙丁魚；用蒸、烤、煮，少煎炸。</li>'+
+    '<li><b>植物固醇</b>：每天約 2 g 可再降 LDL 約 5–10%。天然來源有堅果、豆類、全穀、植物油；添加植物固醇的強化食品要先問醫師或營養師再吃。</li>'+
+    '<li><b>蛋與內臟</b>：蛋可每天 1 顆內（蛋白不限），少吃內臟、魚卵、蝦卵、蟹黃；有糖尿病或已在治療者請依醫師建議。</li>'+
+    '<li><b>限制</b>：加工肉（香腸、熱狗、火腿、培根、貢丸）、油炸、甜點、含糖飲料。</li>'+
+    '<li><b>酒精</b>：最好不喝；要喝每天上限男 2 份、女 1 份（1 份＝啤酒 360 ml、紅酒 150 ml、烈酒 45 ml），一週至少 2 天不喝。</li>'+
+    '<li>體重若過重，減 5–10% 對 LDL 與三酸甘油酯都有幫助，但不要極端節食。</li></ul></div>';
+  h+='<div class="card"><h2>🍱 台灣外食換換看</h2><table><tr><th>場景</th><th>少碰</th><th>換成</th></tr>'+
+    '<tr><td>早餐店</td><td>奶油厚片、培根蛋餅、鐵板麵、薯餅、奶茶</td><td>燕麥或全麥吐司、水煮蛋／茶葉蛋、無糖豆漿、地瓜、玉米、無糖茶</td></tr>'+
+    '<tr><td>便當</td><td>炸排骨、炸雞腿、滷肉飯、肥滷肉汁</td><td>烤雞腿去皮、烤魚、滷豆腐豆干、蒸魚；菜加倍、飯半碗到八分、湯汁別淋飯</td></tr>'+
+    '<tr><td>夜市</td><td>鹹酥雞、炸雞排、臭豆腐（炸）、蚵仔煎、大腸包小腸、甜不辣</td><td>烤玉米、烤魚、烤雞肉串（去皮）、清燙青菜、滷味選豆干／海帶／蔬菜（少貢丸、米血）、茶葉蛋</td></tr>'+
+    '<tr><td>手搖飲</td><td>珍奶、含糖茶、奶蓋、果汁</td><td>無糖綠茶／烏龍、檸檬水（無糖）、黑咖啡、白開水</td></tr>'+
+    '<tr><td>火鍋</td><td>麻辣鍋底、肉片（五花、牛小排）、加工火鍋料、油條、喝湯</td><td>清湯或昆布鍋、豆腐、菇類、大量蔬菜、海鮮、瘦肉；湯不喝、沾醬少放沙茶</td></tr>'+
+    '<tr><td>麵店／小吃</td><td>乾麵加豬油、炸物配菜、肉羹、滷肉</td><td>清湯麵、燙青菜、滷蛋、豆干、海帶，麵量減半</td></tr>'+
+    '<tr><td>下午茶／點心</td><td>蛋糕、餅乾、泡芙、冰品</td><td>水果、無調味堅果、無糖優格、無糖豆漿</td></tr></table></div>';
+  h+='<div class="card"><h2>🏃 運動進程</h2>'+planTable()+
+    '<ul class="b"><li>中強度＝微喘、能說話但不能唱歌（約 5–6/10 的用力程度）。</li><li>肌力：每週 2 次，不同日；先求動作標準再加重量。</li><li>步數包含運動走路。久坐每小時起來動 3 分鐘。</li><li>有心血管症狀、關節問題、或年紀大久未運動，開始前請先問醫師。</li></ul></div>';
+  h+='<div class="card"><h2>😴 睡眠</h2><ul class="b">'+
+    '<li>每天睡 7–8 小時，23:00 前上床，起床時間固定（週末誤差 ≤ 1 小時）。</li>'+
+    '<li>睡前 1 小時不滑手機、不看螢幕，手機放床外充電。</li>'+
+    '<li>下午 2 點後不碰咖啡因（咖啡、茶、可樂、能量飲）。</li>'+
+    '<li>晚餐不要太晚、不要太撐，睡前 3 小時盡量不吃宵夜；睡前不喝酒（酒會破壞睡眠）。</li>'+
+    '<li>睡眠不足會增加食慾與壓力荷爾蒙，進而影響體重與血脂。長期打呼、白天很想睡，請跟醫師談睡眠呼吸中止症。</li></ul></div>';
+  h+='<div class="card"><h2>🩺 跟醫師討論</h2><ul class="b">'+
+    '<li>開始前：把 LDL 163 的報告帶去，請醫師評估你的心血管風險與 LDL 目標。</li>'+
+    '<li>確認有沒有其他原因（甲狀腺、肝腎、藥物、家族性高膽固醇）。</li>'+
+    '<li>第 12 週：抽血複檢 LDL、HDL、三酸甘油酯、總膽固醇，帶著本 App 的紀錄（設定→匯出備份）回診。</li>'+
+    '<li>生活型態做足仍未達標，醫師可能考慮藥物；已在服藥請不要自行停藥。</li></ul></div>';
+  h+=disclaimer();
+  return h;
+}
+
+function viewSettings(){
+  var h='<h1>設定與備份</h1>';
+  h+='<div class="card"><h2>計畫開始日</h2><label for="setStart">開始日（第 1 天）</label><input id="setStart" type="date" value="'+S.start+'">'+
+    '<p class="small">計畫共 84 天，到 '+lastPlanDay()+' 結束。改日期不會刪除打勾紀錄，但各週對應會改變。</p>'+
+    '<button class="btn" style="width:100%" data-act="savestart">更新開始日</button></div>';
+  h+='<div class="card"><h2>外觀</h2><div class="seg" role="group" aria-label="外觀">'+
+    ['auto:跟隨系統','light:淺色','dark:深色'].map(function(x){var p=x.split(':');return '<button data-act="theme" data-v="'+p[0]+'" aria-pressed="'+(S.theme===p[0])+'">'+p[1]+'</button>'}).join('')+'</div></div>';
+  h+='<div class="card"><h2>備份（JSON）</h2><p class="small">資料只存在這支手機／這個瀏覽器，換機或清除資料前請先匯出。</p>'+
+    '<div class="row wrap"><button class="btn" data-act="export">匯出備份檔</button><button class="btn sec" data-act="copyjson">複製備份文字</button></div>'+
+    '<label for="importFile">匯入備份檔（會覆蓋目前資料）</label><input id="importFile" type="file" accept="application/json,.json">'+
+    '<label for="importText">或貼上備份文字</label><textarea id="importText" placeholder="貼上備份 JSON"></textarea>'+
+    '<button class="btn sec" style="width:100%;margin-top:8px" data-act="importtext">用貼上的文字匯入</button></div>';
+  h+='<div class="card"><h2>重置</h2><p class="small">清除全部資料並重新開始。無法復原，請先匯出備份。</p><button class="btn danger" data-act="reset">清除所有資料</button></div>';
+  return h;
+}
+
+var TABS=[['today','✅','今天'],['history','📅','歷史'],['logs','📈','數據'],['plan','📋','計畫'],['settings','⚙️','設定']];
+function render(){
+  var y=window.scrollY;
+  applyTheme();
+  var app=document.getElementById('app');
+  if(!S.start){app.innerHTML=viewWelcome();return}
+  var body=ui.tab==='today'?viewToday():ui.tab==='history'?viewHistory():ui.tab==='logs'?viewLogs():ui.tab==='plan'?viewPlan():viewSettings();
+  app.innerHTML=body+'<nav class="tabbar" role="tablist"><div class="in">'+TABS.map(function(t){return '<button role="tab" data-act="tab" data-tab="'+t[0]+'" aria-selected="'+(ui.tab===t[0])+'"><span>'+t[1]+'</span>'+t[2]+'</button>'}).join('')+'</div></nav>';
+  window.scrollTo(0,y);
+}
+var toastTimer;
+function toast(m){
+  var t=document.getElementById('toast');t.textContent=m;t.style.display='block';
+  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.style.display='none'},2600);
+}
+
+/* ---------- actions ---------- */
+function exportData(){
+  var blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ldl-tracker-backup-'+todayStr()+'.json';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);
+  toast('已匯出備份檔');
+}
+function doImport(text){
+  var o;
+  try{o=sanitize(JSON.parse(text))}catch(e){o=null}
+  if(!o||!o.start){toast('匯入失敗：檔案格式不對');return}
+  if(!confirm('匯入會覆蓋目前所有資料，確定嗎？'))return;
+  S=o;save();ui.view=null;ui.tab='today';render();toast('匯入成功');
+}
+function numVal(id){var el=document.getElementById(id);return el?parseFloat(el.value):NaN}
+function addLog(kind){
+  var dId=kind==='ldl'?'ldlDate':'wDate',vId=kind==='ldl'?'ldlVal':'wVal';
+  var d=document.getElementById(dId).value,v=numVal(vId);
+  var lo=kind==='ldl'?20:20,hi=kind==='ldl'?500:300;
+  if(!validDate(d)){toast('請選擇日期');return}
+  if(!isFinite(v)||v<lo||v>hi){toast(kind==='ldl'?'LDL 請輸入 20–500 的數字':'體重請輸入 20–300 的數字');return}
+  var arr=kind==='ldl'?S.ldl:S.weights;
+  var ex=arr.filter(function(x){return x.date===d})[0];
+  v=Math.round(v*10)/10;
+  if(ex)ex.val=v;else arr.push({date:d,val:v});
+  save();render();toast('已記錄 '+v+(kind==='ldl'?' mg/dL':' kg'));
+}
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-act]');if(!el)return;
+  var a=el.getAttribute('data-act');
+  if(a==='begin'){
+    var d=document.getElementById('startDate').value,l=numVal('baseLdl');
+    if(!validDate(d)){toast('請選開始日');return}
+    S.start=d;
+    if(isFinite(l)&&l>=20&&l<=500)S.ldl.push({date:d,val:Math.round(l*10)/10});
+    save();ui.view=null;ui.tab='today';render();
+  }else if(a==='tab'){ui.tab=el.getAttribute('data-tab');render();window.scrollTo(0,0)}
+  else if(a==='toggle'){
+    var d2=ui.view||todayStr(),id=el.getAttribute('data-id');
+    var c=S.checks[d2]||(S.checks[d2]={});
+    if(c[id])delete c[id];else c[id]=true;
+    if(!Object.keys(c).length)delete S.checks[d2];
+    save();render();
+  }
+  else if(a==='prevday'){ui.view=addDays(ui.view||todayStr(),-1);render()}
+  else if(a==='nextday'){var n=addDays(ui.view||todayStr(),1);ui.view=n>todayStr()?todayStr():n;render()}
+  else if(a==='gotoday'){ui.view=null;render()}
+  else if(a==='goday'){ui.view=el.getAttribute('data-date');ui.tab='today';render();window.scrollTo(0,0)}
+  else if(a==='addldl')addLog('ldl');
+  else if(a==='addweight')addLog('weight');
+  else if(a==='dellog'){
+    var arr=el.getAttribute('data-kind')==='ldl'?S.ldl:S.weights,i=+el.getAttribute('data-i');
+    if(arr[i]&&confirm('刪除這筆紀錄？')){arr.splice(i,1);save();render()}
+  }
+  else if(a==='savestart'){
+    var v=document.getElementById('setStart').value;
+    if(!validDate(v)){toast('日期不正確');return}
+    S.start=v;save();ui.view=null;render();toast('已更新開始日');
+  }
+  else if(a==='theme'){S.theme=el.getAttribute('data-v');save();render()}
+  else if(a==='export')exportData();
+  else if(a==='copyjson'){
+    var txt=JSON.stringify(S);
+    var done=function(){toast('已複製備份文字')};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,function(){fallbackCopy(txt)});
+    else fallbackCopy(txt);
+  }
+  else if(a==='importtext')doImport(document.getElementById('importText').value);
+  else if(a==='reset'){
+    if(confirm('真的要清除所有資料嗎？無法復原！')&&confirm('再確認一次：全部打勾、體重、LDL 紀錄都會消失。')){
+      S=blank();save();ui.view=null;ui.tab='today';render();
+    }
+  }
+});
+function fallbackCopy(t){
+  var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('已複製備份文字')}catch(e){toast('複製失敗，請改用匯出備份檔')}
+  ta.remove();
+}
+document.addEventListener('change',function(e){
+  if(e.target&&e.target.id==='importFile'){
+    var f=e.target.files&&e.target.files[0];if(!f)return;
+    var r=new FileReader();r.onload=function(){doImport(String(r.result))};
+    r.onerror=function(){toast('讀取檔案失敗')};r.readAsText(f);
+    e.target.value='';
+  }
+});
+var lastDay=todayStr();
+function checkRollover(){var t=todayStr();if(t!==lastDay){lastDay=t;ui.view=null;if(S.start)render()}}
+setInterval(checkRollover,30000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkRollover()});
+render();
+try{if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js')['catch'](function(){})}catch(e){}
+})();
+</script>
+</body>
+</html>
